@@ -1,8 +1,10 @@
 # 컴퓨터사이언스 공부
 
 ## 목차
-1. Markdown 공부
-2. Github CLI 익히기
-3. Python 문법 정리
-4. 데이터분석 with Pandas
-5. C++ 기초 _(-ing)_
+|번호|내용|진행 상황|
+|------|---|---|
+|1|데이터 분석(R)||
+|2|[Python 문법정리](https://github.com/BEAWETOME/ComputerScienceStudy/tree/main/PythonBasic)| Finish |
+|3| Pandas 데이터 분석(Python)| |
+|4|[객체지향프로그래밍(JAVA)](https://github.com/BEAWETOME/ComputerScienceStudy/tree/main/JAVA)| -ing|
+|5|Linux 기초| |
