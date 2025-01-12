@@ -44,3 +44,159 @@
 - head, tail
     - 텍스트로 작성된 파일의 앞 10행, 마지막 10행 출력
     - -n 숫자 옵션을 주어 원하는 행숫자별로 출력 가능
+- 리다이렉션( >, >>, | 등)의 활용
+    - echo는 터미널 화면에 출력하는 명령어
+    - echo와 > : 표준 출력의 결과를 덮어쓰기로 파일로 저장하는 기능
+    - echo와 >> : 표준 출력의 결과를 파일에 추가모드로 저장하는 기능
+    - | 은 왼쪽 실행문의 결과값을 오른쪽 실행문의 입력값으로 전달
+- grep
+    - 문자열 내에서 특정 패턴이나 문자열을 검색
+    - 기본 사용법
+    - grep [옵션] [패턴] [파일명]
+        - -r옵션 : 디렉토리 내 모든 파일에서 검색
+        - -i옵션(ignore) : 대소문자 구분 없이 검색
+        - -n옵션 : 라인수 출력
+        - 예시)grep -rni "hello" mydir
+            - hello 문자열을 라인수와 함께 mydir폴더에서 대소문자 구분 없이 검색
+- find
+    - 파일이나 디렉토리를 검색하여 위치 출력
+    - 기본사용법
+        - find [경로] [옵션] [행동]
+        - -name옵션 : 이름으로 검색
+        - -type: 타입으로 검색 (f는 파일, d 디렉토리 등 파일타입으로 검색)
+        - -exec, \, {}
+            - exec : find로 찾은 결과에 대해 실행명령.
+            - \ : exec의 종료지점을 의미
+            - {} : find로 찾은 대상이 담기는 공간을 의미
+    - 사용예시
+        - find . -type f -name "**.txt" : 현재폴더에서 파일타입 중에 .txt로 끝나는 파일명 검색*
+    - 활용예시
+        - find . -name "*.txt"  | xargs grep -rni “hello”
+            - |(파이프라인)을 통해 그 다음 명령어로 전달
+            - xargs는 입력받은 결과를 인수(input)으로 전달하는 것을 의미(execute arguments)
+        - find . -name "*.txt" -exec grep -rni "hello" {} \;
+            - {}는 find가 찾은 파일의 경로 결과가 들어가고, \;는 -exec 옵션의 종료를 나타내는 구문
+            - 다른예시1) find .  -name "*.txt" -exec cp {} ./testFolder/  \;
+                - find로 찾은 파일목록을 cp(복사)
+            - 다른예시2)find .  -name "*.txt" -exec echo {} \;
+                - find로 찾은 파일목록을 echo명령어로 출력 실행
+    - 사용자와 그룹
+    - 리눅스에서 super권한이 있는 root계정과 그외 계정으로 사용자는 구성
+    - 신규 사용자 생성 및 비밀번호 입력
+        - useradd newuser
+        - passwd newuser
+    - 사용자목록조회
+        - cat /etc/passwd
+    - 사용자 교체후 파일권한 관련 테스트
+        - su - newuser 엔터 후 전환하고자 하는 계정의 비밀번호 입력
+        - 원래 사용자로 돌아오려면 exit
+        - root계정으로 교체하려면 su -
+        - sudo 키워드는 현재 계정에서 root 권한을 이용하여 명령어를 실행하는 명령어
+            - root가 아닌 현재 사용자의 비밀번호를 입력해야 함을 반드시 기억
+            - sudo를 쓸수 있는 사용자와 명령어가 따로 정의돼 있어서 아무사용자가 아무명령어를 사용하는 것은 불가
+    - 파일권한
+        - chmod xxx test.txt
+            - test.txt파일에 대하여 소유자:소유그룹:그외(others)에 대해 권한을 부여
+            - 숫자 표기법
+                - 권한은 rwx(421) 권한으로 구성(Read, Write, Execute)
+                - 그러므로 chmod 777 test.txt 형식으로 변경
+                - test.txt파일의 소유자,그룹,other에게 rwxrwxrwx권한을 부여한다는 의미
+            - 기호적 표기법
+                - 권한을 변경할 때, 숫자 대신 기호를 사용하는 방법
+                - chmod u+x test.txt: 소유자에게 실행 권한 추가
+                - chmod g-w test.txt: 그룹의 쓰기 권한 제거
+                - chmod o=r test.txt: 다른 사용자의 권한을 읽기만 가능하게 설정
+    - 파일 소유자와 그룹
+        - chown 소유자:소유그룹 파일명
+            - 특정파일의 소유자와 그룹을 새롭게 부여하는 것
+- 그외
+    - 프로세스 관련
+        - ps -ef : 프로세스 목록조회
+            - -e옵션은 모든 프로세스, f는 full format
+        - kill -9 [PID] : 프로세스 종료
+    - 패키지 관련(yum, apt-get)
+        - yum은 레드헷 계열, apt-get는 데비안 계열의 패키지 관리 도구
+        - nginx설치 예시 및 실행
+            - sudo apt update
+            sudo apt install nginx
+            - sudo systemctl start nginx
+                - systemd는 현대 리눅스 시스템에서 널리 사용되는 시스템 및 서비스 관리자이며, systemctl은 이를 제어하는 주요 도구
+        - java 설치 예시
+            - sudo apt-get install openjdk-11-jdk
+- 네트워크 관련
+    - nslookup
+        - 특정 도메인의 IP 주소 매핑을 조회할때 사용
+        - ex)nslookup google.com
+    - ifconfig
+        - 나의 IP정보 등 네트워크 설정정보 출력
+        - 윈도우는 ipconfig
+    - ping [hostname/IP] : 네트워크 연결상태 확인
+        - ping은 보안상 일반적으로 막아둠에 유의
+        - ping [xxx.xxx.xxx.xxx](http://xxx.xxx.xxx.xxx)(IP주소)
+        - ex)ping 8.8.8.8(google dns)
+    - nc -zv 또는 telnet : 특정 port까지 열려있는지 확인
+        - ex)nc -zv naver.com 443
+        - ex)nc -zv [naver.com](http://naver.com) 22(일반적으로 막혀있음)
+    - ssh
+        - 리눅스는 기본적으로 멀티사용자 접속을 지원
+        - 원격접속 명령어
+        - 원격 호스트와의 터미널 세션을 제공
+        - ex)ssh [username]@[hostname/IP]
+    - scp : 파일 원격 전송 ex)scp [source] [destination]
+- 쉘 제어문
+    - 쉘 명령어 스크립트 작성
+        - 쉘 명령어를 파일형태로 스크립트로 작성하고 실행하는 것이 가능
+        - 파일 확장자 .sh
+        - if, else 등 프로그래밍 언어 사용 가능
+        - 실행방법
+            - 현재 폴더에서 ./my_script.sh
+            - 스크립트나 컴파일된 프로그램을 실행할 때는 일반 쉘명령어와 구분을 짓고 현재폴더의 대상파일임을 명확히 하기 위해 ./ 사용함에 유의
+    - if문(조건문)
+        - if [ 조건 ]; then 
+         조건이 참일 때 실행할 명령
+        elif [ 다른 조건 ]; then
+         첫 번째 조건이 거짓이고 다른 조건이 참일 때 실행할 명령
+        else
+         모든 조건이 거짓일 때 실행할 명령
+        fi
+    - for문(반복문)
+    for 변수 in 항목들; 
+    do
+         반복할 명령
+    done
+- vi 에디터
+    - vi는 UNIX 기반 시스템에서 가장 오래된 텍스트 에디터 중 하나
+        - 리눅스 기반 OS설치시 기본적으로 같이 설치
+    - 리눅스에서 vi의 후속모델인 vim와 nano등의 에디터도 많이 사용
+    - vi는 명령모드와 입력모드로 구성
+        - 명령모드 : 텍스트를 편집하는 대신에 커서를 이동하거나 텍스트를 삭제/복사/붙여넣기 하는 등의 명령을 수행
+        - 입력모드 : 텍스트를 입력하거나 수정
+- 파일 열기
+    - vi 파일명
+- 명령모드
+    - i : 현재 커서부터 입력모드로 전환
+    - a : 다음 커서부터 입력모드로 전환. 한줄의 끝에서 입력시 많이 사용.
+    - o : 다음줄커서부터 입력모드로 전환
+    - x : 현재 커서가 위치한 단어 삭제
+    - dd : 현재 커서가 위치한 행 삭제
+    - yy : 현재 커서가 위치한 행 복사
+    - p : 현재 행 이후에 붙여넣기
+- 명령모드
+    - esc
+    - :w
+        - 파일 저장
+    - :q
+        - 저장없이 vi 종료
+    - :wq
+        - 저장 후 vi종료
+    - G
+        - 파일의 마지막 줄로 이동
+    - gg
+        - 파일의 첫 줄로 이동
+    - Ctrl + f
+        - 한 페이지 아래로 이동
+    - Ctrl + b
+        - 한 페이지 위로 이동
+    - /
+        - 검색하기
+        - 예를 들어, "hello"를 찾으려면 /hello 입력 후 엔터
